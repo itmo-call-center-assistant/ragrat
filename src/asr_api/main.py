@@ -13,6 +13,8 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 from transformers import AutoModel
 
+from src.document_store.routes import router as document_router
+
 curr_dir = Path(__file__).parent
 
 
@@ -76,6 +78,7 @@ stream.mount(app)
 
 static = StaticFiles(directory="ui", html=True)
 app.mount("/ui", static)
+app.include_router(document_router)
 
 
 class NoCacheMiddleware(BaseHTTPMiddleware):
