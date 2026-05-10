@@ -51,3 +51,16 @@ class BatchUpsertResponse(BaseModel):
 
     status: str = "ok"
     count: int = Field(ge=0)
+
+
+class ASRSearchRequest(BaseModel):
+    model_config = ConfigDict(strict=True)
+
+    transcription: str = Field(min_length=1)
+
+    @field_validator("transcription")
+    @classmethod
+    def transcription_must_not_be_whitespace(cls, v: str) -> str:
+        if v.strip() == "":
+            raise ValueError("transcription cannot be empty or whitespace")
+        return v

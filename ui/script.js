@@ -133,7 +133,11 @@ async function setupWebRTC() {
     eventSource.addEventListener("output", (event) => {
       console.log(event);
       const eventJson = JSON.parse(event.data);
-      addMessage(eventJson.role, eventJson.content);
+      if (eventJson.role === "retrieved_chunks") {
+        displayChunks(eventJson.chunks);
+      } else {
+        addMessage(eventJson.role, eventJson.content);
+      }
     });
   } catch (err) {
     console.log(err);
@@ -151,6 +155,29 @@ function addMessage(role, content) {
   chatMessages.appendChild(messageDiv);
   chatMessages.scrollTop = chatMessages.scrollHeight;
   chatHistory.push({ role, content });
+}
+
+function displayChunks(chunks) {
+  const container = document.createElement("div");
+  container.classList.add("chunks-container");
+  const header = document.createElement("div");
+  header.classList.add("chunks-header");
+  header.textContent = `Retrieved Chunks (${chunks.length})`;
+  container.appendChild(header);
+  chunks.forEach((chunk, i) => {
+    const chunkDiv = document.createElement("div");
+    chunkDiv.classList.add("chunk-item");
+    chunkDiv.innerHTML = `<div class="chunk-text">${escapeHtml(chunk.text)}</div><div class="chunk-doc">${escapeHtml(chunk.document)}</div>`;
+    container.appendChild(chunkDiv);
+  });
+  chatMessages.appendChild(container);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 function stop() {

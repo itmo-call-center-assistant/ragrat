@@ -13,6 +13,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 from transformers import AutoModel
 
+from src.document_store.routes import do_search
 from src.document_store.routes import router as document_router
 
 curr_dir = Path(__file__).parent
@@ -52,11 +53,14 @@ def detection(audio: tuple[int, np.ndarray]):
     print(f"File size: {os.path.getsize(tmp_path)}")
 
     transcription = model.model.transcribe(tmp_path)
+    print("ASR transcription:", transcription)
+
     if transcription:
         message = Message(role="user", content=transcription)
         yield AdditionalOutputs(message)
-
-    print("ASR transcription:", transcription)
+        chunks = do_search(transcription)
+        if chunks:
+            yield AdditionalOutputs(RetrievedChunks(chunks=chunks))
     yield audio
 
 
@@ -66,6 +70,11 @@ stream = Stream(handler=ReplyOnPause(detection), modality="audio", mode="send")
 class Message(BaseModel):
     role: str
     content: str
+
+
+class RetrievedChunks(BaseModel):
+    role: str = "retrieved_chunks"
+    chunks: list[dict]
 
 
 class InputData(BaseModel):

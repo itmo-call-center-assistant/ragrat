@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from .main import search as do_search
 from .main import upsert, upsert_batch
 from .models import (
+    ASRSearchRequest,
     BatchUpsertRequest,
     BatchUpsertResponse,
     SearchRequest,
@@ -30,3 +31,8 @@ def batch_upsert_endpoint(req: BatchUpsertRequest):
     items = [{"text": i.text, "document": i.document} for i in req.items]
     upsert_batch(items)
     return BatchUpsertResponse(count=len(items))
+
+
+@router.post("/search/by-asr", response_model=list[SearchResult])
+def search_by_asr_endpoint(req: ASRSearchRequest):
+    return do_search(req.transcription, limit=10)
