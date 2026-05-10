@@ -20,6 +20,7 @@ dependencies = [
     "soundfile>=0.13.1",
     "lancedb>=0.30.2",
     "sentence-transformers==4.*",
+    "openai>=1.0.0",
 ]
 
 [tool.ruff]

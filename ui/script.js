@@ -3,6 +3,9 @@ let chatHistory = [];
 let peerConnection;
 let webrtc_id;
 let isRecording = false;
+import { marked } from "https://unpkg.com/marked@18.0.3/lib/marked.esm.js";
+
+console.log(marked);
 
 const audioOutput = document.getElementById("audio-output");
 const startButton = document.getElementById("start-button");
@@ -151,7 +154,12 @@ async function setupWebRTC() {
 function addMessage(role, content) {
   const messageDiv = document.createElement("div");
   messageDiv.classList.add("message", role);
-  messageDiv.textContent = content;
+  console.log(role, marked);
+  if (role === "assistant" && marked) {
+    messageDiv.innerHTML = marked.parse(content);
+  } else {
+    messageDiv.textContent = content;
+  }
   chatMessages.appendChild(messageDiv);
   chatMessages.scrollTop = chatMessages.scrollHeight;
   chatHistory.push({ role, content });

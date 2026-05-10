@@ -1,3 +1,4 @@
+import os
 import tempfile
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -7,6 +8,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastrtc import AdditionalOutputs, ReplyOnPause, Stream
+from openai import OpenAI
 from pydantic import BaseModel
 from scipy.io import wavfile
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -17,6 +19,27 @@ from src.document_store.routes import do_search
 from src.document_store.routes import router as document_router
 
 curr_dir = Path(__file__).parent
+
+openai_client = OpenAI(
+    api_key=os.environ["OPENAI_API_KEY"], base_url=os.environ.get("OPENAI_API_BASE")
+)
+
+
+def summarize_chunks(query: str, chunks: list[dict]) -> str:
+    chunks_text = "\n\n".join(f"[{i + 1}] {c['text']}" for i, c in enumerate(chunks))
+    response = openai_client.responses.create(
+        model=os.environ["OPENAI_MODEL"],
+        input=f"""
+Based on the user's query: "{query}", summarize the following retrieved
+context chunks in a concise and relevant way. Focus on information that
+directly answers or relates to the query.
+
+Retrieved chunks:
+{chunks_text}
+
+Summary:""",
+    )
+    return response.output_text
 
 
 model: AutoModel | None = None
@@ -61,6 +84,8 @@ def detection(audio: tuple[int, np.ndarray]):
         chunks = do_search(transcription)
         if chunks:
             yield AdditionalOutputs(RetrievedChunks(chunks=chunks))
+            summary = summarize_chunks(transcription, chunks)
+            yield AdditionalOutputs(Message(role="assistant", content=summary))
     yield audio
 
 
