@@ -38,7 +38,8 @@ async function setupWebRTC() {
   updateButtonState();
   const timeoutId = setTimeout(() => {
     const toast = document.getElementById("error-toast");
-    toast.textContent = "Connection is taking longer than usual. Are you on a VPN?";
+    toast.textContent =
+      "Connection is taking longer than usual. Are you on a VPN?";
     toast.className = "toast warning visible";
     setTimeout(() => {
       toast.classList.remove("visible");
@@ -97,7 +98,10 @@ async function setupWebRTC() {
       } else {
         const checkState = () => {
           if (peerConnection.iceGatheringState === "complete") {
-            peerConnection.removeEventListener("icegatheringstatechange", checkState);
+            peerConnection.removeEventListener(
+              "icegatheringstatechange",
+              checkState,
+            );
             resolve();
           }
         };
@@ -127,6 +131,7 @@ async function setupWebRTC() {
     await peerConnection.setRemoteDescription(serverResponse);
     const eventSource = new EventSource("/outputs?webrtc_id=" + webrtc_id);
     eventSource.addEventListener("output", (event) => {
+      console.log(event);
       const eventJson = JSON.parse(event.data);
       addMessage(eventJson.role, eventJson.content);
     });

@@ -1,4 +1,3 @@
-import json
 import tempfile
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -7,7 +6,7 @@ import numpy as np
 from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
-from fastrtc import ReplyOnPause, Stream
+from fastrtc import AdditionalOutputs, ReplyOnPause, Stream
 from pydantic import BaseModel
 from scipy.io import wavfile
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -51,6 +50,9 @@ def detection(audio: tuple[int, np.ndarray]):
     print(f"File size: {os.path.getsize(tmp_path)}")
 
     transcription = model.model.transcribe(tmp_path)
+    if transcription:
+        message = Message(role="user", content=transcription)
+        yield AdditionalOutputs(message)
 
     print("ASR transcription:", transcription)
     yield audio
@@ -100,6 +102,6 @@ def _(webrtc_id: str):
     async def output_stream():
         async for output in stream.output_stream(webrtc_id):
             chatbot = output.args[0]
-            yield f"event: output\ndata: {json.dumps(chatbot[-1])}\n\n"
+            yield f"event: output\ndata: {chatbot.model_dump_json()}\n\n"
 
     return StreamingResponse(output_stream(), media_type="text/event-stream")
