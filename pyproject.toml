@@ -7,8 +7,18 @@ requires-python = ">=3.12,<3.13"
 dependencies = [
     "fastapi>=0.136.1",
     "fastrtc[vad]>=0.0.34",
+    "hydra-core",
+    "omegaconf",
+    "pyannote-audio==4.0.0",
+    "sentencepiece",
+    "torch==2.8.0",
+    "torchaudio==2.8.0",
     "numpy>=2.4.4",
     "onnxruntime==1.25.*",
+    "transformers==4.57.1",
+    "accelerate>=1.13.0",
+    "torchcodec==0.7.0",
+    "soundfile>=0.13.1",
 ]
 
 [tool.ruff]

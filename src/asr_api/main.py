@@ -1,4 +1,6 @@
 import json
+import tempfile
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 import numpy as np
@@ -7,14 +9,50 @@ from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastrtc import ReplyOnPause, Stream
 from pydantic import BaseModel
+from scipy.io import wavfile
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
+from transformers import AutoModel
 
 curr_dir = Path(__file__).parent
 
 
+model: AutoModel | None = None
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global model
+    model_name = "ai-sage/GigaAM-v3"
+    print(f"Loading ASR model: {model_name}")
+    revision = "e2e_rnnt"
+    model = AutoModel.from_pretrained(
+        model_name,
+        revision=revision,
+        trust_remote_code=True,
+        low_cpu_mem_usage=False,
+    )
+    model.eval()
+    app.state.asr_model = model
+    print("ASR model loaded")
+    yield
+
+
 def detection(audio: tuple[int, np.ndarray]):
-    print("detect", audio)
+    print("detection called")
+    sr, audio_data = audio
+    print(f"Audio shape: {audio_data.shape}, dtype: {audio_data.dtype}, sr: {sr}")
+
+    import os
+
+    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
+        tmp_path = f.name
+    wavfile.write(tmp_path, sr, audio_data.squeeze())
+    print(f"File size: {os.path.getsize(tmp_path)}")
+
+    transcription = model.model.transcribe(tmp_path)
+
+    print("ASR transcription:", transcription)
     yield audio
 
 
@@ -31,7 +69,7 @@ class InputData(BaseModel):
     chatbot: list[Message]
 
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 stream.mount(app)
 
 static = StaticFiles(directory="ui", html=True)
