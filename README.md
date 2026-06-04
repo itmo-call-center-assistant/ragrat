@@ -14,6 +14,10 @@ FastAPI service for chunking documents and indexing into Weaviate.
 
 ### Run
 
+```sh
+uv run podman compose up
+```
+
 ```bash
 uv run --env-file .env fastapi dev src/indexer/app.py
 ```
