@@ -8,57 +8,8 @@ from fastrtc import AdditionalOutputs, get_current_context
 from openai import AsyncOpenAI
 from pydantic import BaseModel
 from scipy.io import wavfile
-from src.document_store import search as do_search
 
-_filter_model = None
-_filter_lock: asyncio.Lock | None = None
-
-
-def _get_filter_lock() -> asyncio.Lock:
-    global _filter_lock
-    if _filter_lock is None:
-        _filter_lock = asyncio.Lock()
-    return _filter_lock
-
-
-def set_filter_model(model):
-    global _filter_model
-    _filter_model = model
-
-
-async def should_search(transcription: str) -> bool:
-    global _filter_model
-    lock = _get_filter_lock()
-
-    if _filter_model is None:
-        from llama_cpp import Llama
-
-        _filter_model = Llama.from_pretrained(
-            repo_id="LiquidAI/LFM2.5-350M-GGUF",
-            filename="LFM2.5-350M-Q4_K_M.gguf",
-        )
-
-    async with lock:
-        response = _filter_model.create_chat_completion(
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are a binary classifier. Decide if the following user query "
-                        "requires searching a knowledge base for additional context. "
-                        "Answer with ONLY YES or NO."
-                    ),
-                },
-                {
-                    "role": "user",
-                    "content": transcription,
-                },
-            ],
-            max_tokens=4,
-            temperature=0.0,
-        )
-    answer = response["choices"][0]["message"]["content"].strip().upper()
-    return answer == "YES"
+from src.indexer.main import search as do_search
 
 
 class Message(BaseModel):
@@ -165,11 +116,10 @@ async def detection(audio: tuple[int, np.ndarray]):
     if transcription:
         session_states[webrtc_id]["transcripts"].append(transcription)
         yield AdditionalOutputs(Message(role="user", content=transcription))
-        if await should_search(transcription):
-            chunks = do_search(transcription)
-            if chunks:
-                yield AdditionalOutputs(RetrievedChunks(chunks=chunks))
-                llm = get_llm()
-                summary = await llm.summarize(session_states[webrtc_id]["transcripts"], chunks)
-                yield AdditionalOutputs(Message(role="assistant", content=summary))
+        chunks = do_search(transcription)
+        if chunks:
+            yield AdditionalOutputs(RetrievedChunks(chunks=chunks))
+            llm = get_llm()
+            summary = await llm.summarize(session_states[webrtc_id]["transcripts"], chunks)
+            yield AdditionalOutputs(Message(role="assistant", content=summary))
     yield audio

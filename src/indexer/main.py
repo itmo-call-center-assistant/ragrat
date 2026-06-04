@@ -82,3 +82,22 @@ def upsert_document(text: str, document: str) -> int:
 
     collection.data.insert_many(objects)
     return len(chunks)
+
+
+def search(query: str, limit: int = 10) -> list[dict]:
+    collection = get_collection()
+    results = collection.query.near_text(
+        query=query,
+        limit=limit,
+        return_properties=["text", "document"],
+    )
+    chunks = []
+    for obj in results.objects:
+        chunks.append(
+            {
+                "text": obj.properties["text"],
+                "document": obj.properties["document"],
+                "distance": obj.metadata.distance,
+            }
+        )
+    return chunks
