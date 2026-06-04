@@ -3,7 +3,7 @@ from functools import lru_cache
 
 import weaviate
 from chonkie import Pipeline, TableChunker
-from weaviate.classes.init import Auth
+from weaviate.auth import AuthApiKey
 
 from config import settings
 
@@ -17,8 +17,10 @@ def strip_links(text: str) -> str:
 @lru_cache
 def get_client() -> weaviate.WeaviateClient:
     return weaviate.WeaviateClient(
-        embedded_options=weaviate.EmbeddedOptions(port=11480),
-        auth_credentials=Auth.api_key(settings.weaviate.api_key),
+        connection_params=weaviate.connect.base.ConnectionParams.from_url(
+            settings.weaviate.url, 9091
+        ),
+        auth_client_secret=AuthApiKey(settings.weaviate.api_key),
     )
 
 
