@@ -1,5 +1,6 @@
 import asyncio
 import tempfile
+from pathlib import Path
 from typing import Protocol
 
 import numpy as np
@@ -109,9 +110,15 @@ async def detection(audio: tuple[int, np.ndarray]):
 
     sr, audio_data = audio
 
-    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-        wavfile.write(tmp.name, sr, audio_data.squeeze())
-        transcription = get_model().model.transcribe(tmp.name)
+    tmp_path = None
+    try:
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+            wavfile.write(tmp.name, sr, audio_data.squeeze())
+            tmp_path = tmp.name
+        transcription = get_model().model.transcribe(tmp_path)
+    finally:
+        if tmp_path is not None:
+            Path(tmp_path).unlink(missing_ok=True)
 
     if transcription:
         session_states[webrtc_id]["transcripts"].append(transcription)
