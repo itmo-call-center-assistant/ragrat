@@ -20,9 +20,9 @@ Environment variables:
 | `CHUNKING_DEFAULT_CHUNK_SIZE` | `1024` | Default chunk size |
 | `EMBEDDING_MODEL` | `deepvk/USER2-base` | Embedding model |
 | `EMBEDDING_POOLING` | `mean` | Embedding pooling |
-| `OPENAI_API_KEY` | - | OpenAI API key (required) |
-| `OPENAI_BASE_URL` | - | OpenAI base URL (required) |
-| `OPENAI_MODEL` | - | OpenAI model name (required) |
+| `OPENAI_API_KEY` | - | LLM API key (required) |
+| `OPENAI_BASE_URL` | - | LLM base URL (required) |
+| `OPENAI_MODEL` | - | LLM model name (required) |
 
 ## Indexer
 

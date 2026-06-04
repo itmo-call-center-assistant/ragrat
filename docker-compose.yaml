@@ -1,13 +1,13 @@
 services:
   weaviate:
-    image: cr.weaviate.io/semitechnologies/weaviate:1.37
+    image: cr.weaviate.io/semitechnologies/weaviate:1.37.7
     restart: unless-stopped
     ports:
       - "11480:8080"
       - "9091:9091"
     environment:
       AUTHENTICATION_APIKEY_ENABLED: "true"
-      AUTHENTICATION_APIKEY_ALLOWED_KEYS: "${WEAVIATE_API_KEY:-secr3t}"
+      AUTHENTICATION_APIKEY_ALLOWED_KEYS: "${WEAVIATE_API_KEY}"
       AUTHORIZATION_ADMIN_LIST_ENABLED: "true"
       PERSISTENCE_DATA_PATH: "/var/lib/weaviate"
       DISK_USE_WARNING_THRESHOLD: 0.95
@@ -20,7 +20,7 @@ services:
       - transformers_cache:/root/.cache
 
   t2v-model:
-    image: ghcr.io/huggingface/text-embeddings-inference:cpu-arm64-1.9
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-arm64-sha-5bc4d88
     restart: unless-stopped
     environment:
       HF_TOKEN: "${HF_TOKEN}"
