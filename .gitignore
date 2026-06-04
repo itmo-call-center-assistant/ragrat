@@ -16,5 +16,4 @@ notebooks/.cache
 # Sensitive data
 .env
 
-db/
 *.log

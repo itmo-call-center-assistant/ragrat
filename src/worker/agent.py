@@ -9,7 +9,7 @@ from openai import AsyncOpenAI
 from pydantic import BaseModel
 from scipy.io import wavfile
 
-from src.indexer.main import search as do_search
+from src.db import search as do_search
 
 
 class Message(BaseModel):
