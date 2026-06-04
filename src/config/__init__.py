@@ -13,8 +13,6 @@ class ChunkingSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="CHUNKING_")
 
     default_chunk_size: int = 1024
-    lang: str = "en"
-    strategy: str = "wonder"
 
 
 class EmbeddingSettings(BaseSettings):
