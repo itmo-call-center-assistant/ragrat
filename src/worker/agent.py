@@ -1,5 +1,4 @@
 import asyncio
-import os
 import tempfile
 from typing import Protocol
 
@@ -9,6 +8,7 @@ from openai import AsyncOpenAI
 from pydantic import BaseModel
 from scipy.io import wavfile
 
+from config import settings
 from db import search as do_search
 
 
@@ -43,10 +43,10 @@ def set_llm(client: LLMClient) -> None:
 class OpenAIClient:
     def __init__(self):
         self._inner = AsyncOpenAI(
-            api_key=os.environ["OPENAI_API_KEY"],
-            base_url=os.environ.get("OPENAI_API_BASE"),
+            api_key=settings.openai.api_key,
+            base_url=settings.openai.base_url,
         )
-        self._model = os.environ["OPENAI_MODEL"]
+        self._model = settings.openai.model
 
     async def summarize(self, transcripts: list[str], chunks: list[dict]) -> str:
         query = " ".join(transcripts)

@@ -24,10 +24,19 @@ class EmbeddingSettings(BaseSettings):
     pooling: str = "mean"
 
 
+class OpenAISettings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="OPENAI_")
+
+    api_key: str
+    base_url: str
+    model: str
+
+
 class Settings(BaseSettings):
     weaviate: WeaviateSettings = WeaviateSettings()
     chunking: ChunkingSettings = ChunkingSettings()
     embedding: EmbeddingSettings = EmbeddingSettings()
+    openai: OpenAISettings = OpenAISettings()
 
 
 settings = Settings()

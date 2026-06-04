@@ -5,8 +5,6 @@ let webrtc_id;
 let isRecording = false;
 import { marked } from "https://unpkg.com/marked@18.0.3/lib/marked.esm.js";
 
-console.log(marked);
-
 const audioOutput = document.getElementById("audio-output");
 const startButton = document.getElementById("start-button");
 const chatMessages = document.getElementById("chat-messages");
@@ -134,7 +132,6 @@ async function setupWebRTC() {
     await peerConnection.setRemoteDescription(serverResponse);
     const eventSource = new EventSource("/outputs?webrtc_id=" + webrtc_id);
     eventSource.addEventListener("output", (event) => {
-      console.log(event);
       const eventJson = JSON.parse(event.data);
       if (eventJson.role === "retrieved_chunks") {
         displayChunks(eventJson.chunks);
@@ -143,7 +140,6 @@ async function setupWebRTC() {
       }
     });
   } catch (err) {
-    console.log(err);
     clearTimeout(timeoutId);
     console.error("Error setting up WebRTC:", err);
     showError("Failed to establish connection. Please try again.");
@@ -154,7 +150,6 @@ async function setupWebRTC() {
 function addMessage(role, content) {
   const messageDiv = document.createElement("div");
   messageDiv.classList.add("message", role);
-  console.log(role, marked);
   if (role === "assistant" && marked) {
     messageDiv.innerHTML = marked.parse(content);
   } else {
