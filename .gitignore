@@ -17,3 +17,4 @@ notebooks/.cache
 .env
 
 *.log
+.DS_Store
