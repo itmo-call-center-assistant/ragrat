@@ -19,7 +19,11 @@ uv run podman compose up
 ```
 
 ```bash
-uv run --env-file .env fastapi dev src/indexer/app.py
+uv run --env-file .env fastapi dev src/indexer/app.py --port 8001
+```
+
+```bash
+uv run --env-file .env fastapi dev src/worker/app.py --port 8000
 ```
 
 ### Configuration
@@ -41,5 +45,5 @@ Environment variables:
 Upload markdown documents to indexer:
 
 ```bash
-uv run src/demo_md_upload/main.py <source_dir> --indexer-url http://localhost:8000
+uv run src/demo_md_upload/main.py <source_dir> --indexer-url http://localhost:8001
 ```

@@ -38,6 +38,30 @@ services:
               count: all
               capabilities: [gpu]
 
+  indexer:
+    build:
+      context: .
+      dockerfile: Dockerfile.indexer
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      WEAVIATE_URL: "http://weaviate:8080"
+    depends_on:
+      - weaviate
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+
 volumes:
   weaviate_data:
   transformers_cache:

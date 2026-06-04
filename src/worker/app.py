@@ -5,10 +5,10 @@ from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastrtc import ReplyOnPause, Stream
 from pydantic import BaseModel
-from src.asr_api import agent
-from src.document_store.routes import router as document_router
 from starlette.middleware.base import BaseHTTPMiddleware
 from transformers import AutoModel
+
+from . import agent
 
 
 class InputData(BaseModel):
@@ -43,7 +43,6 @@ stream.mount(app)
 
 static = StaticFiles(directory="ui", html=True)
 app.mount("/ui", static)
-app.include_router(document_router)
 
 
 class NoCacheMiddleware(BaseHTTPMiddleware):
