@@ -8,7 +8,6 @@ from fastrtc import AdditionalOutputs, get_current_context
 from openai import AsyncOpenAI
 from pydantic import BaseModel
 from scipy.io import wavfile
-
 from src.document_store import search as do_search
 
 _filter_model = None

@@ -5,11 +5,10 @@ from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastrtc import ReplyOnPause, Stream
 from pydantic import BaseModel
-from starlette.middleware.base import BaseHTTPMiddleware
-from transformers import AutoModel
-
 from src.asr_api import agent
 from src.document_store.routes import router as document_router
+from starlette.middleware.base import BaseHTTPMiddleware
+from transformers import AutoModel
 
 
 class InputData(BaseModel):

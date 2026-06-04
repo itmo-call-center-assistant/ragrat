@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    "fastapi>=0.136.1",
+    "fastapi[standard]>=0.136.1",
     "fastrtc[vad]>=0.0.34",
     "hydra-core",
     "omegaconf",
@@ -22,6 +22,10 @@ dependencies = [
     "sentence-transformers==4.*",
     "openai>=1.0.0",
     "llama-cpp-python>=0.3.0",
+    "click>=8.3.3",
+    "podman-compose>=1.5.0",
+    "chonkie>=1.6.8",
+    "weaviate-client>=4.0.0",
 ]
 
 [tool.ruff]
