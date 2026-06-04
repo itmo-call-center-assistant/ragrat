@@ -32,6 +32,10 @@ def get_collection():
                 weaviate.classes.config.NamedVectors.text2_vec_transformers(
                     name="text_vector",
                     source_properties=["text"],
+                    vectorizer_collection_config=weaviate.classes.config.VectorizerConfig(
+                        model=settings.embedding.model,
+                        pooling=settings.embedding.pooling,
+                    ),
                 )
             ],
             properties=[

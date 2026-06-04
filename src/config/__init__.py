@@ -8,14 +8,20 @@ class WeaviateSettings(BaseSettings):
 
 
 class ChunkingSettings(BaseSettings):
-    default_chunk_size: int = 1024
+    default_chunk_size: int = 512
     lang: str = "en"
     strategy: str = "wonder"
+
+
+class EmbeddingSettings(BaseSettings):
+    model: str = "deepvk/USER2-base"
+    pooling: str = "mean"
 
 
 class Settings(BaseSettings):
     weaviate: WeaviateSettings = WeaviateSettings()
     chunking: ChunkingSettings = ChunkingSettings()
+    embedding: EmbeddingSettings = EmbeddingSettings()
 
 
 settings = Settings()
