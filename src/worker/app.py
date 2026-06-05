@@ -1,36 +1,18 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
-from fastapi.staticfiles import StaticFiles
 from fastrtc import ReplyOnPause, Stream
-from pydantic import BaseModel
-from starlette.middleware.base import BaseHTTPMiddleware
-from transformers import AutoModel
 
 from . import agent
-
-
-class InputData(BaseModel):
-    webrtc_id: str
-    chatbot: list[agent.Message]
+from .asr import load_model
+from .schemas import InputData
+from .static import mount_static
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    model_name = "ai-sage/GigaAM-v3"
-    print(f"Loading ASR model: {model_name}")
-    revision = "e2e_rnnt"
-    model = AutoModel.from_pretrained(
-        model_name,
-        revision=revision,
-        trust_remote_code=True,
-        low_cpu_mem_usage=False,
-    )
-    model.eval()
-    app.state.asr_model = model
-    print("ASR model loaded")
-    agent.set_model(model)
+    await load_model()
     agent.set_llm(agent.OpenAIClient())
     yield
 
@@ -41,26 +23,12 @@ agent.set_stream(stream)
 app = FastAPI(lifespan=lifespan)
 stream.mount(app)
 
-static = StaticFiles(directory="ui", html=True)
-app.mount("/ui", static)
-
-
-class NoCacheMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
-        response = await call_next(request)
-        if request.url.path.startswith("/ui"):
-            response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-            response.headers["Pragma"] = "no-cache"
-            response.headers["Expires"] = "0"
-        return response
-
-
-app.add_middleware(NoCacheMiddleware)
+mount_static(app)
 
 
 @app.post("/input_hook")
 async def _(body: InputData):
-    stream.set_input(body.webrtc_id, body.model_dump()["chatbot"])
+    stream.set_input(body.webrtc_id, body.chatbot)
     return {"status": "ok"}
 
 

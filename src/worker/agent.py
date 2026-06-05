@@ -6,21 +6,13 @@ from typing import Protocol
 import numpy as np
 from fastrtc import AdditionalOutputs, get_current_context
 from openai import AsyncOpenAI
-from pydantic import BaseModel
 from scipy.io import wavfile
 
 from config import settings
 from db import search as do_search
 
-
-class Message(BaseModel):
-    role: str
-    content: str
-
-
-class RetrievedChunks(BaseModel):
-    role: str = "retrieved_chunks"
-    chunks: list[dict]
+from .asr import get_model
+from .schemas import Message, RetrievedChunks
 
 
 class LLMClient(Protocol):
@@ -62,20 +54,6 @@ class OpenAIClient:
             ),
         )
         return response.output_text
-
-
-model = None
-
-
-def get_model():
-    if model is None:
-        raise RuntimeError("ASR model not set")
-    return model
-
-
-def set_model(m):
-    global model
-    model = m
 
 
 session_states: dict[str, dict] = {}
