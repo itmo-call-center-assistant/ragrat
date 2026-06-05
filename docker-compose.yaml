@@ -6,8 +6,10 @@ services:
       - "11480:8080"
       - "9091:9091"
     environment:
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "false"
       AUTHENTICATION_APIKEY_ENABLED: "true"
-      AUTHENTICATION_APIKEY_ALLOWED_KEYS: "${WEAVIATE_API_KEY}"
+      AUTHENTICATION_APIKEY_ALLOWED_KEYS: $WEAVIATE_API_KEY
+      AUTHENTICATION_APIKEY_USERS: "admin"
       AUTHORIZATION_ADMIN_LIST_ENABLED: "true"
       PERSISTENCE_DATA_PATH: "/var/lib/weaviate"
       DISK_USE_WARNING_THRESHOLD: 0.95
@@ -21,27 +23,18 @@ services:
 
   t2v-model:
     image: ghcr.io/huggingface/text-embeddings-inference:cpu-arm64-sha-5bc4d88
-    restart: unless-stopped
     environment:
       HF_TOKEN: "${HF_TOKEN}"
+      MODEL_ID: deepvk/USER2-base
       GPU_OVERLAMS: "1"
     ports:
       - "8082:8080"
     volumes:
       - transformers_cache:/root/.cache
     platform: linux/arm64
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
 
   indexer:
-    build:
-      context: .
-      dockerfile: Dockerfile.indexer
+    image: ghcr.io/vladimirklepov/ragrat/indexer:latest
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -53,9 +46,7 @@ services:
       - weaviate
 
   worker:
-    build:
-      context: .
-      dockerfile: Dockerfile.worker
+    image: ghcr.io/vladimirklepov/ragrat/worker:latest
     restart: unless-stopped
     ports:
       - "8001:8000"
