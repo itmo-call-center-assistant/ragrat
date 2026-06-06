@@ -36,22 +36,25 @@ def set_llm(client: LLMClient) -> None:
 class OpenAIClient:
     def __init__(self):
         self._inner = AsyncOpenAI(
-            api_key=settings.openai.api_key,
-            base_url=settings.openai.base_url,
+            api_key=settings.llm.api_key,
+            base_url=settings.llm.base_url,
         )
-        self._model = settings.openai.model
+        self._model = settings.llm.model
 
     async def summarize(self, transcripts: list[str], chunks: list[dict]) -> str:
         query = " ".join(transcripts)
         chunks_text = "\n\n".join(f"[{i + 1}] {c['text']}" for i, c in enumerate(chunks))
         response = await self._inner.responses.create(
             model=self._model,
+            temperature=settings.llm.temperature,
             input=(
-                f'Based on the user\'s transcripts: "{query}", summarize the following '
-                f"retrieved context chunks in a concise and relevant way. Focus on "
-                f"information that directly answers or relates to the query.\n\n"
-                f"Retrieved chunks:\n{chunks_text}\n\nSummary:"
+                f'Ответь на вопрос клиента: "{query}" коротко и верно. '
+                "Используй ТОЛЬКО информацию из указанного контекста."
+                "Не добавляй информацю, не указанную в контексте.\n\n"
+                f"Контекст:\n{chunks_text}\n\n"
+                "Ответ:"
             ),
+            extra_body={"chat_template_kwargs": {"enable_thinking": False}},
         )
         return response.output_text
 

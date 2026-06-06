@@ -1,11 +1,10 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class WeaviateSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="WEAVIATE_")
+class QdrantSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="QDRANT_")
 
-    host: str
-    api_key: str
+    url: str
     collection: str = "DocumentChunks"
 
 
@@ -19,22 +18,22 @@ class EmbeddingSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="EMBEDDING_")
 
     model: str = "deepvk/USER2-base"
-    pooling: str = "mean"
 
 
-class OpenAISettings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="OPENAI_")
+class LLMSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="LLM_")
 
     api_key: str
     base_url: str
     model: str
+    temperature: float = 0.1
 
 
 class Settings(BaseSettings):
-    weaviate: WeaviateSettings = WeaviateSettings()
+    qdrant: QdrantSettings = QdrantSettings()
     chunking: ChunkingSettings = ChunkingSettings()
     embedding: EmbeddingSettings = EmbeddingSettings()
-    openai: OpenAISettings = OpenAISettings()
+    llm: LLMSettings = LLMSettings()
 
 
 settings = Settings()
