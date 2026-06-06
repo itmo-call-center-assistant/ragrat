@@ -1,2 +1,0 @@
-FROM semitechnologies/transformers-inference:custom
-RUN MODEL_NAME=deepvk/USER2-base ./download.py
