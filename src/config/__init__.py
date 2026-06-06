@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class WeaviateSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="WEAVIATE_")
 
-    url: str
+    host: str
     api_key: str
     collection: str = "DocumentChunks"
 

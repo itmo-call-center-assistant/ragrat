@@ -1,35 +1,33 @@
 from functools import lru_cache
 
 import weaviate
-from weaviate.auth import AuthApiKey
+from weaviate.classes.config import Configure
+from weaviate.classes.init import Auth
 
 from config import settings
 
 
 @lru_cache
 def get_client() -> weaviate.WeaviateClient:
-    return weaviate.WeaviateClient(
-        connection_params=weaviate.connect.base.ConnectionParams.from_url(
-            settings.weaviate.url, 9091
-        ),
-        auth_client_secret=AuthApiKey(settings.weaviate.api_key),
+    return weaviate.connect_to_custom(
+        http_host=settings.weaviate.host,
+        http_port=11480,
+        http_secure=False,
+        grpc_host=settings.weaviate.host,
+        grpc_port=50051,
+        grpc_secure=False,
+        auth_credentials=Auth.api_key(settings.weaviate.api_key),
     )
 
 
 def get_collection():
     client = get_client()
-    collection = client.collections.get(settings.weaviate.collection)
-    if collection is None:
-        client.collections.create(
+    if not client.collections.exists(settings.weaviate.collection):
+        collection = client.collections.create(
             name=settings.weaviate.collection,
-            vectorizer_config=[
-                weaviate.classes.config.NamedVectors.text2_vec_transformers(
-                    name="text_vector",
-                    source_properties=["text"],
-                    vectorizer_collection_config=weaviate.classes.config.VectorizerConfig(
-                        model=settings.embedding.model,
-                        pooling=settings.embedding.pooling,
-                    ),
+            vector_config=[
+                Configure.Vectors.text2vec_transformers(
+                    name="text_vector", source_properties=["text"]
                 )
             ],
             properties=[
@@ -41,6 +39,7 @@ def get_collection():
                 ),
             ],
         )
+    else:
         collection = client.collections.get(settings.weaviate.collection)
     return collection
 

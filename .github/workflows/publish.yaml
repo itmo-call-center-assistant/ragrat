@@ -17,54 +17,81 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/ruff-action@v4.0.0
 
-  indexer:
+  # indexer:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+
+  #     - name: Build indexer image
+  #       id: build-indexer
+  #       uses: redhat-actions/buildah-build@v2
+  #       with:
+  #         context: .
+  #         tags: |
+  #           latest
+  #           ${{ github.sha }}
+  #         image: ghcr.io/${{ github.repository }}/indexer
+  #         containerfiles: |
+  #           ./Dockerfile.indexer
+
+  #     - name: Push indexer image
+  #       uses: redhat-actions/push-to-registry@v2
+  #       with:
+  #         image: ${{ steps.build-indexer.outputs.image }}
+  #         tags: ${{ steps.build-indexer.outputs.tags }}
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
+
+  # worker:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+
+  #     - name: Build worker image
+  #       id: build-worker
+  #       uses: redhat-actions/buildah-build@v2
+  #       with:
+  #         context: .
+  #         tags: |
+  #           latest
+  #           ${{ github.sha }}
+  #         image: ghcr.io/${{ github.repository }}/worker
+  #         containerfiles: |
+  #           ./Dockerfile.worker
+
+  #     - name: Push worker image
+  #       uses: redhat-actions/push-to-registry@v2
+  #       with:
+  #         image: ${{ steps.build-worker.outputs.image }}
+  #         tags: ${{ steps.build-worker.outputs.tags }}
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
+
+  embedder:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build indexer image
-        id: build-indexer
+      - name: Build embedder image
+        id: build-embedder
         uses: redhat-actions/buildah-build@v2
         with:
           context: .
           tags: |
-            latest
+            user2-base-latest
             ${{ github.sha }}
-          image: ghcr.io/${{ github.repository }}/indexer
+          envs: HF_TOKEN=${{ secrets.HF_TOKEN }}
+          image: ghcr.io/${{ github.repository }}/text2vec
           containerfiles: |
-            ./Dockerfile.indexer
+            ./Dockerfile.text2vec
 
-      - name: Push indexer image
+      - name: Push image
         uses: redhat-actions/push-to-registry@v2
         with:
-          image: ${{ steps.build-indexer.outputs.image }}
-          tags: ${{ steps.build-indexer.outputs.tags }}
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-  worker:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build worker image
-        id: build-worker
-        uses: redhat-actions/buildah-build@v2
-        with:
-          context: .
-          tags: |
-            latest
-            ${{ github.sha }}
-          image: ghcr.io/${{ github.repository }}/worker
-          containerfiles: |
-            ./Dockerfile.worker
-
-      - name: Push worker image
-        uses: redhat-actions/push-to-registry@v2
-        with:
-          image: ${{ steps.build-worker.outputs.image }}
-          tags: ${{ steps.build-worker.outputs.tags }}
+          image: ${{ steps.build-embedder.outputs.image }}
+          tags: ${{ steps.build-embedder.outputs.tags }}
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
