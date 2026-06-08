@@ -18,3 +18,4 @@ notebooks/.cache
 
 *.log
 .DS_Store
+docs/

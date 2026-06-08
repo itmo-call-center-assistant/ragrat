@@ -1,3 +1,5 @@
+import hashlib
+import json
 import uuid
 from functools import lru_cache
 
@@ -19,6 +21,8 @@ from qdrant_client.models import (
 from config import settings
 
 embedding_dim = 768
+batch_size = 32
+
 TextEmbedding.add_custom_model(
     model=settings.embedding.model,
     pooling=PoolingType.MEAN,
@@ -26,7 +30,7 @@ TextEmbedding.add_custom_model(
     sources=ModelSource(hf=settings.embedding.model),
     dim=embedding_dim,
 )
-embedding_model = TextEmbedding(model_name=settings.embedding.model)
+embedding_model = TextEmbedding(model_name=settings.embedding.model, batch_size=batch_size)
 
 
 @lru_cache
@@ -93,16 +97,25 @@ def upsert(items: list[dict]) -> None:
     client = get_client()
 
     points = []
-    for i, vector in enumerate(embedding_model.embed(item["text"] for item in items)):
+    for i, dense_vector in enumerate(embedding_model.embed(item["text"] for item in items)):
         item = items[i]
-        bm25_vector = get_bm25(item["text"])
+        text = item["text"]
+
+        bm25_vector = get_bm25(text)
+        md5_hex = hashlib.md5(json.dumps(item).encode("utf-8")).hexdigest()  # noqa
+
         points.append(
             PointStruct(
-                id=str(uuid.uuid4()),
-                vector={"dense_text": vector, "bm25_text": bm25_vector},
-                payload={"text": item["text"], "document": item["document"]},
+                id=str(uuid.UUID(md5_hex)),
+                vector={"dense_text": dense_vector, "bm25_text": bm25_vector},
+                payload={"text": text, "document": item["document"]},
             )
         )
 
     # 3. Upload to Qdrant
-    client.upsert(collection_name=settings.qdrant.collection, points=points)
+    print(
+        f"uploading {len(points)} chunks ...",
+    )
+    client.upload_points(
+        collection_name=settings.qdrant.collection, points=points, parallel=4, max_retries=3
+    )

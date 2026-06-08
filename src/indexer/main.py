@@ -3,7 +3,6 @@ import re
 from chonkie import Pipeline, TableChunker
 
 from config import settings
-from db import upsert
 
 LINK_PATTERN = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 
@@ -33,7 +32,6 @@ def chunk_text(text: str, chunk_size: int | None = None) -> list[str]:
     return chunks
 
 
-def upsert_document(text: str, document: str) -> int:
+def chunk_document(text: str, document: str) -> list[dict]:
     chunks = chunk_text(text)
-    upsert([{"text": text, "document": document} for text in chunks])
-    return len(chunks)
+    return [{"text": chunk, "document": document} for chunk in chunks]
