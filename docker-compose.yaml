@@ -8,33 +8,5 @@ services:
       - qdrant_storage:/qdrant/storage:z
     restart: always
 
-  indexer:
-    image: ghcr.io/itmo-call-center-assistant/ragrat/indexer:latest
-    # image: indexer
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
-    volumes:
-      - transformers_cache:/root/.cache/huggingface
-    environment:
-      QDRANT_URL: "http://qdrant:6333"
-    env_file:
-      - .env
-
-  worker:
-    image: ghcr.io/itmo-call-center-assistant/ragrat/worker:latest
-    # image: worker
-    restart: unless-stopped
-    ports:
-      - "8001:8000"
-    volumes:
-      - transformers_cache:/root/.cache/huggingface
-    environment:
-      - QDRANT_URL=http://qdrant:6333
-    env_file:
-      - .env
-
 volumes:
   qdrant_storage:
-  transformers_cache:
-  fastembed_cache:
