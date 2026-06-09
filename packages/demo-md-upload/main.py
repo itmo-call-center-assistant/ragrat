@@ -5,6 +5,8 @@ import frontmatter
 import httpx
 from tqdm import tqdm
 
+batch_size = 3
+
 
 def find_markdowns(source_dir: Path) -> list[Path]:
     return list(source_dir.rglob("*.md"))
@@ -36,7 +38,7 @@ def upload(source_dir: Path, indexer_url: str):
         document, text = parse_document(md_file, source_dir)
         items.append({"text": text, "document": document})
 
-    batches = [items[i : i + 100] for i in range(0, len(items), 100)]
+    batches = [items[i : i + batch_size] for i in range(0, len(items), batch_size)]
     client = httpx.Client(timeout=300)
     total_chunks = 0
     for batch in tqdm(batches, desc="Uploading batches"):

@@ -12,6 +12,7 @@ WORKDIR /app
 COPY pyproject.toml uv.lock ./
 COPY packages/shared/pyproject.toml packages/shared/
 COPY packages/worker/pyproject.toml packages/worker/
+ENV SOURCE_DATE_EPOCH=0
 RUN uv sync --frozen --no-dev --no-install-project --package ragrat-worker
 
 COPY packages/shared/ packages/shared/
