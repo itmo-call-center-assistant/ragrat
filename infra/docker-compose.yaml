@@ -30,8 +30,18 @@ services:
       - LLM_MODEL=qwen3.5-35b-a3b
       - LLM_API_KEY
       - LLM_BASE_URL
+  caddy:
+    image: docker.io/caddy:2-alpine
+    environment:
+      - HOST=callcenter.thoughtspile.tech
+    volumes:
+      - ./conf/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
 
 volumes:
   qdrant_storage:
   transformers_cache:
   fastembed_cache:
+  caddy_data:
+  caddy_config:
