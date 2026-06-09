@@ -24,7 +24,7 @@ jobs:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USERNAME }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          envs: LLM_API_KEY,LLM_BASE_URL
+          envs: LLM_API_KEY,LLM_BASE_URL,HOST
           script: |
             cd ~/ragrat/infra
             docker compose pull
