@@ -6,7 +6,8 @@ requires-python = ">=3.12,<3.13"
 dependencies = [
     "fastapi[standard]>=0.136.1",
     "chonkie>=1.6.8",
-    "ragrat-shared"
+    "ragrat-shared",
+    "pydantic-settings>=2.14.1",
 ]
 
 [tool.uv]

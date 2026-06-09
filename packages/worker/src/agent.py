@@ -6,11 +6,11 @@ from typing import Protocol
 import numpy as np
 from fastrtc import AdditionalOutputs, get_current_context
 from openai import AsyncOpenAI
-from ragrat_shared.config import settings
 from ragrat_shared.db import search as do_search
 from scipy.io import wavfile
 
 from .asr import get_model
+from .config import settings
 from .schemas import Message, RetrievedChunks
 
 

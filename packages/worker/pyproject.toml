@@ -18,7 +18,8 @@ dependencies = [
     "pyannote-audio==4.0.0",
     "hydra-core",
     "omegaconf",
-    "ragrat-shared"
+    "ragrat-shared",
+    "pydantic-settings>=2.14.1",
 ]
 
 [tool.uv]

@@ -1,7 +1,8 @@
 import re
 
 from chonkie import Pipeline, TableChunker
-from ragrat_shared.config import settings
+
+from .config import settings
 
 LINK_PATTERN = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 

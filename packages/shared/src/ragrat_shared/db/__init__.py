@@ -110,9 +110,6 @@ def upsert(items: list[dict]) -> None:
             )
         )
 
-    print(
-        f"uploading {len(points)} chunks ...",
-    )
     client.upload_points(
         collection_name=settings.qdrant.collection, points=points, parallel=4, max_retries=3
     )

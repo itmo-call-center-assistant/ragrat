@@ -2364,6 +2364,9 @@ wheels = [
 name = "ragrat"
 version = "0.1.0"
 source = { editable = "." }
+dependencies = [
+    { name = "pydantic-settings" },
+]
 
 [package.dev-dependencies]
 dev = [
@@ -2373,6 +2376,7 @@ dev = [
 ]
 
 [package.metadata]
+requires-dist = [{ name = "pydantic-settings", specifier = ">=2.14.1" }]
 
 [package.metadata.requires-dev]
 dev = [
@@ -2407,6 +2411,7 @@ source = { virtual = "packages/indexer" }
 dependencies = [
     { name = "chonkie" },
     { name = "fastapi", extra = ["standard"] },
+    { name = "pydantic-settings" },
     { name = "ragrat-shared" },
 ]
 
@@ -2414,6 +2419,7 @@ dependencies = [
 requires-dist = [
     { name = "chonkie", specifier = ">=1.6.8" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.136.1" },
+    { name = "pydantic-settings", specifier = ">=2.14.1" },
     { name = "ragrat-shared", editable = "packages/shared" },
 ]
 
@@ -2447,6 +2453,7 @@ dependencies = [
     { name = "omegaconf" },
     { name = "openai" },
     { name = "pyannote-audio" },
+    { name = "pydantic-settings" },
     { name = "ragrat-shared" },
     { name = "scipy" },
     { name = "sentencepiece" },
@@ -2466,6 +2473,7 @@ requires-dist = [
     { name = "omegaconf" },
     { name = "openai", specifier = ">=1.0.0" },
     { name = "pyannote-audio", specifier = "==4.0.0" },
+    { name = "pydantic-settings", specifier = ">=2.14.1" },
     { name = "ragrat-shared", editable = "packages/shared" },
     { name = "scipy", specifier = ">=0.13.1" },
     { name = "sentencepiece" },

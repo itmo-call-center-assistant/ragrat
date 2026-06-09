@@ -28,11 +28,11 @@ jobs:
         with:
           context: .
           tags: |
-            latest
+            workspace
             ${{ github.sha }}
           image: ghcr.io/${{ github.repository }}/indexer
           containerfiles: |
-            ./packages/indexer/Dockerfile
+            ./Dockerfile.indexer
 
       - name: Push indexer image
         uses: redhat-actions/push-to-registry@v2
@@ -54,11 +54,11 @@ jobs:
         with:
           context: .
           tags: |
-            latest
+            workspace
             ${{ github.sha }}
           image: ghcr.io/${{ github.repository }}/worker
           containerfiles: |
-            ./packages/worker/Dockerfile
+            ./Dockerfile.worker
 
       - name: Push worker image
         uses: redhat-actions/push-to-registry@v2

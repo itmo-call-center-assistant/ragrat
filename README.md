@@ -3,7 +3,7 @@
 Prepare development environment using [uv:](https://docs.astral.sh/uv/getting-started/installation/)
 
 ```sh
-uv sync && uv run pre-commit install
+uv sync --all-packages && uv run pre-commit install
 ```
 
 Start DB service using [podman](https://podman.io/docs/installation) (recommended) or docker:
@@ -34,7 +34,7 @@ Environment variables:
 FastAPI service for chunking documents and inserting into Qdrant.
 
 ```bash
-uv run --env-file .env fastapi dev src/indexer/app.py --port 8000
+uv run --env-file .env fastapi dev packages/indexer/src/app.py --port 8000
 ```
 
 ### Demo Upload CLI
@@ -50,7 +50,7 @@ uv run upload_md <source_dir> --indexer-url http://localhost:8000
 FastAPI service with WebRTC audio streaming and ASR.
 
 ```bash
-uv run --env-file .env fastapi dev src/worker/app.py --port 8001
+uv run --env-file .env fastapi dev packages/worker/src/app.py --port 8001
 ```
 
 See demo UI at [http://localhost:8001/ui](http://localhost:8001/ui)
