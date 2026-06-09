@@ -33,7 +33,7 @@ services:
   caddy:
     image: docker.io/caddy:2-alpine
     environment:
-      - HOST=callcenter.thoughtspile.tech
+      - HOST=vkr.thoughtspile.tech
     volumes:
       - ./conf/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
