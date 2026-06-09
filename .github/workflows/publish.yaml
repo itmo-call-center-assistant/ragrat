@@ -28,6 +28,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           context: .
+          extra-args: --timestamp 0
           tags: |
             workspace
             ${{ github.sha }}
@@ -54,6 +55,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           context: .
+          extra-args: --timestamp 0
           tags: |
             workspace
             ${{ github.sha }}
