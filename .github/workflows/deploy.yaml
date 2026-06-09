@@ -16,10 +16,14 @@ jobs:
           target: ~/ragrat
       - name: Restart
         uses: appleboy/ssh-action@v1
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USERNAME }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
+          envs: LLM_API_KEY,LLM_BASE_URL
           script: |
             cd ~/ragrat/infra
             docker compose pull
