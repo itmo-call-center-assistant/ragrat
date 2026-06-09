@@ -42,7 +42,7 @@ uv run --env-file .env fastapi dev packages/indexer/src/app.py --port 8000
 Upload markdown documents to indexer:
 
 ```bash
-uv run upload_md <source_dir> --indexer-url http://localhost:8000
+uv run packages/demo-md-upload/main.py <source_dir> --indexer-url http://localhost:8000
 ```
 
 ## Worker
