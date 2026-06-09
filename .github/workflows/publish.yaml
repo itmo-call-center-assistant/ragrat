@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - workspaces
     tags:
       - "v*"
 
@@ -28,7 +29,7 @@ jobs:
         with:
           context: .
           tags: |
-            latest
+            workspace
             ${{ github.sha }}
           image: ghcr.io/${{ github.repository }}/indexer
           containerfiles: |
@@ -54,7 +55,7 @@ jobs:
         with:
           context: .
           tags: |
-            latest
+            workspace
             ${{ github.sha }}
           image: ghcr.io/${{ github.repository }}/worker
           containerfiles: |

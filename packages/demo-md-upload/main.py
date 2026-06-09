@@ -1,13 +1,3 @@
-# /// script
-# requires-python = ">=3.12"
-# dependencies = [
-#     "click",
-#     "httpx",
-#     "python-frontmatter",
-#     "tqdm",
-# ]
-# ///
-
 from pathlib import Path
 
 import click
@@ -46,7 +36,7 @@ def upload(source_dir: Path, indexer_url: str):
         document, text = parse_document(md_file, source_dir)
         items.append({"text": text, "document": document})
 
-    batches = [items[i : i + 100] for i in range(0, len(items), 32)]
+    batches = [items[i : i + 100] for i in range(0, len(items), 100)]
     client = httpx.Client(timeout=300)
     total_chunks = 0
     for batch in tqdm(batches, desc="Uploading batches"):

@@ -3,10 +3,18 @@ FROM ghcr.io/astral-sh/uv:python3.12-trixie-slim
 WORKDIR /app
 
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-dev --no-install-project
+COPY packages/shared/pyproject.toml packages/shared/
+COPY packages/indexer/pyproject.toml packages/indexer/
+RUN uv sync --frozen --no-dev --no-install-project --package ragrat-indexer
 
-COPY src/ src/
+COPY packages/shared/ packages/shared/
+COPY packages/indexer/ packages/indexer/
 
 EXPOSE 8000
 
-CMD ["uv", "run", "--no-dev", "fastapi", "run", "src/indexer/app.py", "--host", "0.0.0.0", "--port", "8000"]
+CMD [\
+    "uv", "run",\
+    "--package", "ragrat-indexer",\
+    "--no-dev",\
+    "fastapi", "run", "packages/indexer/src/app.py", "--host", "0.0.0.0", "--port", "8000"\
+]

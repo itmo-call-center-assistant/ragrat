@@ -1,0 +1,14 @@
+[project]
+name = "ragrat-shared"
+version = "0.1.0"
+description = "Shared utilities (DB, config) for ragrat"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "pydantic-settings>=2.0.0",
+    "fastembed>=0.8.0",
+    "qdrant-client>=1.18.0",
+]
+
+[tool.uv]
+package = true
+publish = false

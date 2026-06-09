@@ -10,12 +10,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 COPY pyproject.toml uv.lock ./
+COPY packages/shared/pyproject.toml packages/shared/
+COPY packages/worker/pyproject.toml packages/worker/
+RUN uv sync --frozen --no-dev --no-install-project --package ragrat-worker
 
-RUN uv sync --frozen --no-dev --no-install-project
-
-COPY src/ src/
+COPY packages/shared/ packages/shared/
+COPY packages/worker/ packages/worker/
 COPY ui/ ui/
+
 
 EXPOSE 8000
 
-CMD ["uv", "run", "--no-dev", "fastapi", "run", "src/worker/app.py", "--host", "0.0.0.0", "--port", "8000"]
+CMD [\
+    "uv", "run",\
+    "--package", "ragrat-worker",\
+    "--no-dev",\
+    "fastapi", "run", "packages/worker/src/app.py", "--host", "0.0.0.0", "--port", "8000"\
+]
