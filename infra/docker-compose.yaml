@@ -32,6 +32,10 @@ services:
       - LLM_BASE_URL
   caddy:
     image: docker.io/caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
     environment:
       - HOST
     volumes:
