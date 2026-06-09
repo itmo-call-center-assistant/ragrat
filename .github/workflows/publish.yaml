@@ -32,7 +32,7 @@ jobs:
             ${{ github.sha }}
           image: ghcr.io/${{ github.repository }}/indexer
           containerfiles: |
-            ./Dockerfile.indexer
+            ./packages/indexer/Dockerfile
 
       - name: Push indexer image
         uses: redhat-actions/push-to-registry@v2
@@ -58,7 +58,7 @@ jobs:
             ${{ github.sha }}
           image: ghcr.io/${{ github.repository }}/worker
           containerfiles: |
-            ./Dockerfile.worker
+            ./packages/worker/Dockerfile
 
       - name: Push worker image
         uses: redhat-actions/push-to-registry@v2

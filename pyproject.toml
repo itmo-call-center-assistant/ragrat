@@ -4,33 +4,18 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
-dependencies = [
-    "fastapi[standard]>=0.136.1",
-    "fastrtc[vad]>=0.0.34",
-    "hydra-core",
-    "omegaconf",
-    "pyannote-audio==4.0.0",
-    "sentencepiece",
-    "torch==2.8.0",
-    "torchaudio==2.8.0",
-    "numpy>=2.4.4",
-    "accelerate>=1.13.0",
-    "soundfile>=0.13.1",
-    "openai>=1.0.0",
-    "chonkie>=1.6.8",
-    "httpx>=0.28.1",
-    "python-frontmatter>=1.3.0",
-    "click>=8.0.0",
-    "qdrant-client>=1.18.0",
-    "fastembed>=0.8.0",
-    "transformers==4.57.1",
-]
 
-[project.scripts]
-upload-md = "demo_md_upload.main:upload"
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[tool.uv.sources]
+ragrat-shared = { workspace = true }
 
 [tool.uv]
 package = true
+
+[tool.setuptools]
+py-modules = []
 
 [tool.ruff]
 target-version = "py312"
@@ -45,5 +30,5 @@ ignore = ["S101", "S311", "T201", "ARG001"]
 dev = [
     "podman-compose>=1.6.0",
     "pre-commit>=4.3.0",
-    "ruff>=0.15.12",
+    "ruff>=0.15.12"
 ]

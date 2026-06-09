@@ -1,6 +1,5 @@
 from fastapi import APIRouter
-
-from db import upsert
+from ragrat_shared.db import upsert
 
 from .main import chunk_document
 from .models import DocumentRequest, DocumentResponse

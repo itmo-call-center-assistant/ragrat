@@ -1,0 +1,17 @@
+[project]
+name = "ragrat-demo-md-upload"
+version = "0.1.0"
+description = "CLI tool to upload markdown documents to ragrat indexer"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "click>=8.0.0",
+    "httpx>=0.28.1",
+    "python-frontmatter>=1.3.0",
+    "tqdm",
+]
+
+[tool.uv]
+package = true
+
+[project.scripts]
+upload-md = "main:upload"

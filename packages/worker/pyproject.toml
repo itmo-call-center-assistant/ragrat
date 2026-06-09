@@ -1,0 +1,25 @@
+[project]
+name = "ragrat-worker"
+version = "0.1.0"
+description = "Worker service for ragrat"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi[standard]>=0.136.1",
+    "fastrtc[vad]>=0.0.34",
+    "openai>=1.0.0",
+    "transformers==4.57.1",
+    "torch==2.8.0",
+    "torchaudio==2.8.0",
+    "numpy>=2.4.4",
+    "scipy>=0.13.1",
+    "sentencepiece",
+    "accelerate>=1.13.0",
+    "soundfile>=0.13.1",
+    "pyannote-audio==4.0.0",
+    "hydra-core",
+    "omegaconf",
+    "ragrat-shared"
+]
+
+[tool.uv]
+package = true

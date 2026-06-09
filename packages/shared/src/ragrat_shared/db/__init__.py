@@ -17,8 +17,7 @@ from qdrant_client.models import (
     SparseVectorParams,
     VectorParams,
 )
-
-from config import settings
+from ragrat_shared.config import settings
 
 embedding_dim = 768
 batch_size = 32
@@ -77,10 +76,9 @@ def search(query: str, limit: int = 10) -> list[dict]:
         ],
         query=FusionQuery(fusion=Fusion.RRF),
         limit=limit,
-        with_payload=["text", "document"],  # Only return these specific fields
+        with_payload=["text", "document"],
     )
 
-    # 3. Format the results
     chunks = []
     for hit in results.points:
         chunks.append(
@@ -112,7 +110,6 @@ def upsert(items: list[dict]) -> None:
             )
         )
 
-    # 3. Upload to Qdrant
     print(
         f"uploading {len(points)} chunks ...",
     )
